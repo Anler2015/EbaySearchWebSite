@@ -1,0 +1,124 @@
+
+<div class="container rounded" id="search-div">
+  <div class="row clearfix">
+    <div class="col-md-12 column rounded">
+      <form class="form-horizontal"  (ngSubmit)="onSubmit()">
+        <!--header-->
+        <p class="text-center font-weight-bold text-white" style="font-size: 2em">Product Search</p>
+        <!--keyword-->
+        <div class="form-group row">
+          <div class="col-sm-2"></div>
+          <label for="keyword" class="col-sm-2 control-label text-white">Keyword<span class="required-star text-danger">*</span></label>
+          <div class="col-sm-8">
+            <input type="text" required class="col-sm-7 form-control" id="keyword" name="keyword" placeholder="Enter Product Name(eg.iPhone 8)"
+                   #keyword="ngModel" [ngClass]="{'is-invalid': (keyword.dirty || keyword.touched) && keyword.value == ''}" [(ngModel)]="searchForm.keyword"  />
+            <div class="invalid-feedback">Please enter a keyword.</div>
+          </div>
+
+        </div>
+        <!--category-->
+        <div class="form-group row">
+          <div class="col-sm-2"></div>
+          <label for="category" class="col-sm-2 col-form-label text-white">Category</label>
+          <div class="col-sm-2">
+            <select class="custom-select" name="category" id="category" [(ngModel)]="searchForm.category" >
+              <option *ngFor="let cate of categories" [value]="cate.val">{{cate.name}}</option>
+            </select>
+          </div>
+          <div class="col-sm-2"></div>
+        </div>
+
+        <!--condition-->
+        <div class="form-group row">
+          <div class="col-sm-2"></div>
+          <label for="category" class="col-sm-2 col-form-label text-white">Condition</label>
+          <div class="col-sm-3">
+            <div class="form-check form-check-inline">
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" id="New" name="New" [(ngModel)]="newCondition" (click)="set_condition($event.target)">
+                <label class="form-check-label text-white" for="New">New</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" id="Used" name="Used" value="" [(ngModel)]="usedCondition" (click)="set_condition($event.target)">
+                <label class="form-check-label text-white" for="Used">Used</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" id="Unspecified" name="Unspecified" value="" [(ngModel)]="unspecifedCondition" (click)="set_condition($event.target)">
+                <label class="form-check-label text-white" for="Unspecified">Unspecified</label>
+              </div>
+             </div>
+          </div>
+          <div class="col-sm-2"></div>
+        </div>
+
+        <!--shipping-->
+        <div class="form-group row">
+          <div class="col-sm-2"></div>
+          <label for="category" class="col-sm-2 col-form-label text-white">Shipping Options</label>
+          <div class="col-sm-8">
+            <div class="form-check form-check-inline ">
+              <div class="form-check form-check-inline ">
+                <input class="form-check-input" type="checkbox" id="local" name="local" value="" [(ngModel)]="searchForm.local"  >
+                <label class="form-check-label text-white" >Local Pickup</label>
+              </div>
+              <div class="form-check form-check-inline ">
+                <input class="form-check-input" type="checkbox" id="shipping" name="shipping" value="" [(ngModel)]="searchForm.shipping" >
+                <label class="form-check-label text-white" >Free Shipping</label>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-2"></div>
+        </div>
+
+        <!--distance-->
+        <div class="form-group row">
+          <div class="col-sm-2"></div>
+          <label for="distance" class="col-sm-2 col-form-label text-white">Distance(miles)</label>
+          <div class="col-sm-2">
+            <input class="form-control"  type="text" name="distance" id="distance" placeholder="10" value="" [(ngModel)]="searchForm.distance">
+          </div>
+          <div class="col-sm-2">
+          </div>
+        </div>
+
+        <!--location-->
+        <div class="row">
+          <div class="col-sm-2"></div>
+          <legend class="col-form-label col-sm-2 text-white">From<span class="required-star text-danger">*</span></legend>
+          <div class="col-sm-8">
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="zipmode"  [value]="false" checked [(ngModel)]="isThere" (click)=" input_zipcode = '' ">
+              <label class="form-check-label text-white">Current location</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="zipmode" [value]="true" [(ngModel)]="isThere" >
+              <label class="form-check-label text-white">Other. Please specify zip code:</label>
+            </div>
+            <div >
+
+              <input class="form-control col-sm-7" matInput [matAutocomplete]="auto" type="text" name="zipcode" id="zipcode"  value="" [disabled]="isThere !== true"    [(ngModel)]="input_zipcode"
+                     #code="ngModel" [ngClass]="{'is-invalid': (code.dirty || code.touched) && !isVaildZipcode(code.value) && isThere }" (ngModelChange)="getAutoCode(code.value)" >
+              <mat-autocomplete  #auto="matAutocomplete" >
+                <mat-option  *ngFor="let zcode of autoCode" [value]="zcode.postalCode">{{zcode.postalCode}}</mat-option>
+              </mat-autocomplete>
+              <div class="invalid-feedback">Please enter a zip code.</div>
+            </div>
+          </div>
+        </div>
+        <!--buttons-->
+        <span>&nbsp;&nbsp;</span>
+        <div class="form-group row" id="search-btn-group">
+          <div class="col-sm-2"></div>
+          <div class="col-sm-6">
+            <button type="submit" class="btn btn-light d-sm-inline-flex" id="search-btn" [disabled]="!getCurZipcode || !isValidation()"  >
+              <i class="material-icons">search</i>Search</button>
+            <span>&nbsp;&nbsp;</span>
+            <button type="button" class="btn btn-light d-sm-inline-flex" id="clear-btn" (click)="clear_all()">
+              <i class="material-icons" >clear_all</i>Clear</button>
+          </div>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</div>

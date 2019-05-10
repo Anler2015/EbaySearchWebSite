@@ -1,0 +1,49 @@
+.material-icons.red {
+  color: crimson;
+}
+.round-progress {
+  position: relative;
+  width: 36px;
+}
+.round-progress .round-progress-text {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+  -webkit-transform: translateY(-50%);
+  text-align: center;
+  width: 100%;
+  z-index: 1;
+}
+.material-icons.star{
+  color: yellow;
+}
+.photo-border{
+  border-style:solid;
+  border-width:8px;
+  border-color: black;
+  border-radius: 8px;
+  padding: 1px;
+}
+.google-photo-border{
+  border-style:solid;
+  border-width:8px;
+  border-color: black;
+  padding: 2px;
+  margin: 3px;
+}
+.whole-photo{
+  position: absolute;
+  text-align: center;
+  width: 100%;
+}
+.my-select{
+  margin: 20px;
+}
+.dark {
+  background: #282933;
+}
+.ship-text{
+  color:#b39959;
+}
+

@@ -1,0 +1,66 @@
+<div>
+  <div>
+    <div class="alert alert-warning" *ngIf="myWishList === null">No records.</div>
+  </div>
+  <div class="container" *ngIf="myWishList !== null">
+    <div class="row float-right mb-2">
+      <button class="btn btn-light" [disabled]="selectedProduct === null" (click)="getProductDetails(selectedProduct.itemId[0])">Details  ></button>
+    </div>
+
+    <div class="table-responsive ">
+      <table class="table table-borderless  text-white table-striped table-dark">
+        <thead id="dark1">
+        <tr>
+          <th >#</th>
+          <th>Image</th>
+          <th>Title</th>
+          <th>Price</th>
+          <th>Shipping</th>
+          <th>Zip</th>
+          <th>Seller</th>
+          <th>Wish List</th>
+        </tr>
+        </thead>
+        <tbody >
+        <tr *ngFor="let product of myWishList; index as i" [class.table-dark]=" product === selectedProduct" (click)="selectProduct(product)">
+          <td>{{i+1}}</td>
+          <td class="img-responsive center-block">
+            <img *ngIf="product.hasOwnProperty('galleryURL')" style="width: 10em;height: 10em;margin: 5px;" src= {{product.galleryURL[0]}}>
+            <p *ngIf="!product.hasOwnProperty('galleryURL')">N/A</p>
+          </td>
+          <td class="text-primary" (click)="getProductDetails(product.itemId[0]);selectProduct(product)">
+            <div *ngIf="product.title[0].length <= 35">{{product.title[0]}}</div>
+            <div *ngIf="product.title[0].length > 35" data-toggle="tooltip" data-placement="bottom"
+                 title={{product.title[0]}}>{{product.title[0].slice(0, 35)}}...</div>
+          </td>
+          <td>{{product.sellingStatus[0].currentPrice[0].__value__}} USD</td>
+          <td>
+            <div *ngIf="product.shippingInfo[0].hasOwnProperty('shippingServiceCost')">
+              <div *ngIf="product.shippingInfo[0].shippingServiceCost[0].__value__ == '0.0'">Free Shipping</div>
+              <div *ngIf="product.shippingInfo[0].shippingServiceCost[0].__value__ != '0.0'">{{product.shippingInfo[0].shippingServiceCost[0].__value__}} USD</div>
+            </div>
+            <div *ngIf="!product.shippingInfo[0].hasOwnProperty('shippingServiceCost')">N/A</div>
+          </td>
+          <td>
+            <p *ngIf="product.hasOwnProperty('postalCode')" >{{product.postalCode}}</p>
+            <p *ngIf="!product.hasOwnProperty('postalCode')">N/A</p>
+          </td>
+          <td>
+            <p *ngIf="product.hasOwnProperty('sellerInfo')" >{{product.sellerInfo[0].sellerUserName[0]}}</p>
+            <p *ngIf="!product.hasOwnProperty('sellerInfo')">N/A</p>
+          </td>
+          <td>
+            <button type="button" class="btn btn-light d-sm-inline-flex" (click)="removeItemFromWishList(product.itemId[0])" >
+              <i class="material-icons md-light" style="color:brown;" >remove_shopping_cart</i>
+            </button>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+
+
+  </div>
+
+
+</div>

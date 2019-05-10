@@ -1,0 +1,299 @@
+<div *ngIf="productDetails !== null">
+
+  <!-- Modal -->
+  <div class="modal fade" id="productphotos" tabindex="-1" role="dialog" aria-labelledby="productphotosModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="productphotosModalLabel">Product Images</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body ">
+
+          <div id="photosCarouselControls" class="carousel slide" data-ride="carousel">
+            <div class="carousel-inner" >
+              <div class="carousel-item active" *ngIf="productImages.length > 0" >
+                <img [attr.src]=productImages[0]  class="d-block w-100 photo-border" alt="..." data-toggle="modal" data-target="#showPhoto">
+              </div>
+              <div class="carousel-item " *ngFor="let link of productImages.slice(1,productImages.length);index as i">
+                  <img [attr.src]=link  class="d-block w-100 photo-border" alt="..." data-toggle="modal" data-target="#showPhoto">
+              </div>
+
+            </div>
+            <a class="carousel-control-prev" href="#photosCarouselControls" role="button" data-slide="prev" (click)="previousImage()">
+              <span class="carousel-control-prev-icon bg-dark" aria-hidden="true"></span>
+              <span class="sr-only">Previous</span>
+            </a>
+            <a class="carousel-control-next" href="#photosCarouselControls" role="button" data-slide="next" (click)="nextImages()">
+              <span class="carousel-control-next-icon bg-dark" aria-hidden="true"></span>
+              <span class="sr-only">Next</span>
+            </a>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="showPhoto"  role="dialog" aria-labelledby="showPhotoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+      <a [href]=productImages[showImagesIndex] >
+        <img class="whole-photo d-block" alt="Responsive image" [attr.src]=productImages[showImagesIndex]  >
+      </a>
+    </div>
+  </div>
+
+
+  <h5 class="d-flex justify-content-center">{{productDetails.Title}}</h5>
+
+  <div class="mb-2 d-flex justify-content-between">
+    <button class="btn btn-light" (click)="back()">< List</button>
+    <div>
+      <button type="button" class="btn btn-light d-sm-inline-flex float-right" >
+        <i class="material-icons md-light" *ngIf="wishListId.indexOf(selectedProductJson.itemId[0]) < 0" (click)="add2WishList(selectedProductJson)">add_shopping_cart</i>
+        <i class="material-icons md-light" *ngIf="wishListId.indexOf(selectedProductJson.itemId[0]) >= 0" style="color:brown;"  (click)="removeItemFromWishList(selectedProductJson.itemId[0])">remove_shopping_cart</i>
+
+      </button>
+      <a [attr.href]="facebook_url">
+        <img style="height: 36px;width: 36px;" src="http://csci571.com/hw/hw8/Images/facebook.png">
+      </a>
+
+    </div>
+
+  </div>
+
+  <nav>
+    <div class="nav nav-tabs justify-content-end " id="nav-tabs" role="tablist">
+      <a class="nav-link btn-light  " [ngClass]="{'btn-dark':activeTab === 'product-tab'}" id="product-tab" data-toggle="tab" href="#product" role="tab" aria-controls="product" aria-selected="true" (click)="setTab($event.target)" >Product</a>
+      <a class="nav-link btn-light" [ngClass]="{'btn-dark':activeTab === 'photos-tab'}" id="photos-tab" data-toggle="tab" href="#photos" role="tab" aria-controls="photos" aria-selected="false" (click)="setTab($event.target)">Photos</a>
+      <a class="nav-link btn-light" [ngClass]="{'btn-dark':activeTab === 'ship-tab'}" id="ship-tab" data-toggle="tab" href="#ship" role="tab" aria-controls="ship" aria-selected="false" (click)="setTab($event.target)">Shipping</a>
+      <a class="nav-link btn-light" [ngClass]="{'btn-dark':activeTab === 'seller-tab'}" id="seller-tab" data-toggle="tab" href="#seller" role="tab" aria-controls="seller" aria-selected="false" (click)="setTab($event.target)">Seller</a>
+      <a class="nav-link btn-light" [ngClass]="{'btn-dark':activeTab === 'similar-products-tab'}" id="similar-products-tab" data-toggle="tab" href="#similar-products" role="tab" aria-controls="similar" aria-selected="false" (click)="setTab($event.target)">Similar Products</a>
+    </div>
+  </nav>
+  <div class="tab-content" id="myTabContent">
+    <!--product info-->
+    <div class="tab-pane fade show active" id="product" role="tabpanel" aria-labelledby="product-tab">
+      <table class="table table-borderless  text-white table-striped table-dark">
+        <tbody>
+          <tr>
+            <td>Product Images</td>
+            <td class="text-muted" data-toggle="modal" data-target="#productphotos">View Product Images Here</td>
+          </tr>
+          <tr *ngIf="productDetails.hasOwnProperty('Subtitle')">
+            <td>SubTitle</td>
+            <td>{{productDetails.Subtitle}}</td>
+          </tr>
+          <tr *ngIf="productDetails.hasOwnProperty('CurrentPrice')">
+            <td>Price</td>
+            <td>$ {{productDetails.CurrentPrice.Value}}</td>
+          </tr>
+          <tr *ngIf="productDetails.hasOwnProperty('Location')">
+            <td>Location</td>
+            <td>{{productDetails.Location}}</td>
+          </tr>
+          <tr *ngIf="productDetails.hasOwnProperty('ReturnPolicy')">
+            <td>Return Policy (US)</td>
+            <td *ngIf="productDetails.ReturnPolicy.ReturnsAccepted ==='Returns Accepted'">Returns Accepted within {{productDetails.ReturnPolicy.ReturnsWithin}}</td>
+            <td *ngIf="productDetails.ReturnPolicy.ReturnsAccepted !=='Returns Accepted'">Returns Not Accepted</td>
+          </tr>
+        </tbody>
+        <tbody *ngIf="productDetails.hasOwnProperty('ItemSpecifics')" >
+        <tr *ngFor="let item of productDetails.ItemSpecifics.NameValueList">
+          <td>{{item.Name}}</td>
+          <td>{{item.Value}}</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+     <!--google photos-->
+    <div class="tab-pane fade" id="photos" role="tabpanel" aria-labelledby="photos-tab">
+      <div class="alert alert-warning" *ngIf="googlePhotos === null || !googlePhotos.hasOwnProperty('items')">No records.</div>
+      <div class="row clearfix" *ngIf="googlePhotos !== null && googlePhotos.hasOwnProperty('items')">
+        <div class="col-md-4 column">
+          <div *ngIf=" googlePhotos.items.length >= 1" class="artistPhoto">
+            <a [attr.href]="googlePhotos.items[0].link" target="_blank">
+              <img class="img-fluid img-thumbnail google-photo-border" alt="Responsive image" [attr.src]="googlePhotos.items[0].link">
+            </a>
+          </div>
+          <div *ngIf="googlePhotos.items.length >= 4" class="artistPhoto">
+            <a [attr.href]="googlePhotos.items[3].link" target="_blank">
+              <img class="img-fluid img-thumbnail google-photo-border" alt="Responsive image" [attr.src]="googlePhotos.items[3].link">
+            </a>
+          </div>
+        </div>
+        <div class="col-md-4 column">
+          <div *ngIf=" googlePhotos.items.length >= 2" class="artistPhoto">
+            <a [attr.href]="googlePhotos.items[1].link" target="_blank">
+              <img class="img-fluid img-thumbnail google-photo-border" alt="Responsive image" [attr.src]="googlePhotos.items[1].link">
+            </a>
+          </div>
+          <div *ngIf="googlePhotos.items.length >= 5" class="artistPhoto">
+            <a [attr.href]="googlePhotos.items[4].link" target="_blank">
+              <img class="img-fluid img-thumbnail google-photo-border" alt="Responsive image" [attr.src]="googlePhotos.items[4].link">
+            </a>
+          </div>
+          <div *ngIf=" googlePhotos.items.length >= 7" class="artistPhoto">
+            <a [attr.href]="googlePhotos.items[6].link" target="_blank">
+              <img class="img-fluid img-thumbnail google-photo-border" alt="Responsive image" [attr.src]="googlePhotos.items[6].link">
+            </a>
+          </div>
+        </div>
+        <div class="col-md-4 column">
+          <div *ngIf=" googlePhotos.items.length >= 3" class="artistPhoto">
+            <a [attr.href]="googlePhotos.items[2].link" target="_blank">
+              <img class="img-fluid img-thumbnail google-photo-border" alt="Responsive image" [attr.src]="googlePhotos.items[2].link">
+            </a>
+          </div>
+          <div *ngIf="googlePhotos.items.length >= 6" class="artistPhoto">
+            <a [attr.href]="googlePhotos.items[5].link" target="_blank">
+              <img class="img-fluid img-thumbnail google-photo-border" alt="Responsive image" [attr.src]="googlePhotos.items[5].link">
+            </a>
+          </div>
+          <div *ngIf=" googlePhotos.items.length >= 8" class="artistPhoto">
+            <a [attr.href]="googlePhotos.items[7].link" target="_blank">
+              <img class="img-fluid img-thumbnail google-photo-border" alt="Responsive image" [attr.src]="googlePhotos.items[7].link">
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!--ship info-->
+    <div class="tab-pane fade" id="ship" role="tabpanel" aria-labelledby="ship-tab">
+      <table class="table table-borderless  text-white table-striped table-dark">
+        <tbody>
+          <tr *ngIf="selectedProductJson !== null && selectedProductJson.shippingInfo[0].hasOwnProperty('shippingServiceCost')">
+            <td>Shipping Cost</td>
+            <td *ngIf="selectedProductJson.shippingInfo[0].shippingServiceCost[0].__value__ == '0.0'">Free Shipping</td>
+            <td *ngIf="selectedProductJson.shippingInfo[0].shippingServiceCost[0].__value__ != '0.0'">{{selectedProductJson.shippingInfo[0].shippingServiceCost[0].__value__}} USD</td>
+          </tr>
+          <tr *ngIf="productDetails.hasOwnProperty('ShipToLocations')">
+            <td>Shipping Locations</td>
+            <td>{{productDetails.ShipToLocations[0]}}</td>
+          </tr>
+          <tr *ngIf="productDetails.hasOwnProperty('HandlingTime')">
+            <td>Handling time</td>
+            <td *ngIf="productDetails.HandlingTime <= 1">{{productDetails.HandlingTime}} Day</td>
+            <td *ngIf="productDetails.HandlingTime > 1">{{productDetails.HandlingTime}} Days</td>
+          </tr>
+          <tr *ngIf="!productDetails.hasOwnProperty('expeditedShipping')">
+            <td>Expedited Shipping </td>
+            <td><i class="material-icons red" >done</i></td>
+          </tr>
+          <tr *ngIf="!productDetails.hasOwnProperty('oneDayShippingAvailable')">
+            <td>One Day Shipping</td>
+            <td><i class="material-icons red" >done</i></td>
+          </tr>
+          <tr *ngIf="productDetails.hasOwnProperty('ReturnPolicy') && productDetails.ReturnPolicy.ReturnsAccepted ==='Returns Accepted'">
+            <td>Return Accepted</td>
+            <td><i class="material-icons red" >done</i></td>
+          </tr>
+
+
+        </tbody>
+      </table>
+    </div>
+    <!--sell info-->
+    <div class="tab-pane fade" id="seller" role="tabpanel" aria-labelledby="seller-tab">
+      <h3 class="text-white bg-dark p-2 d-flex justify-content-center" style="margin: 0">{{productDetails.Seller.UserID}}</h3>
+
+      <table class="table table-borderless  text-white table-striped table-dark">
+
+        <tbody>
+          <tr *ngIf="productDetails.Seller.hasOwnProperty('FeedbackScore')">
+            <td>FeedbackScore</td>
+            <td>{{productDetails.Seller.FeedbackScore}}</td>
+          </tr>
+          <tr *ngIf="productDetails.Seller.hasOwnProperty('PositiveFeedbackPercent')">
+            <td>Popularity</td>
+            <td>
+              <div class="round-progress">
+                <round-progress [current]="productDetails.Seller.PositiveFeedbackPercent" [max]="100"
+                                [radius]="18" [stroke]="2" [color]="'2CCF27'" [clockwise]="false"></round-progress>
+                <div class="round-progress-text">{{productDetails.Seller.PositiveFeedbackPercent}}</div>
+              </div>
+            </td>
+
+          </tr>
+          <tr *ngIf="productDetails.Seller.hasOwnProperty('FeedbackRatingStar')">
+            <td>Feedback Rating Star</td>
+            <td><i class="material-icons star" >stars</i></td>
+          </tr>
+          <tr *ngIf="productDetails.Seller.hasOwnProperty('TopRatedSeller')">
+            <td>Top Rated</td>
+            <td *ngIf="productDetails.Seller.TopRatedSeller === true"><i class="material-icons red" >done</i></td>
+          </tr>
+          <tr *ngIf="productDetails.hasOwnProperty('Storefront')">
+            <td>Buy Product At</td>
+            <td><a [href]="productDetails.Storefront.StoreURL">store</a></td>
+          </tr>
+
+        </tbody>
+      </table>
+    </div>
+    <!--similar products-->
+    <div class="tab-pane fade" id="similar-products" role="tabpanel" aria-labelledby="similar-products-tab">
+      <div class="alert alert-warning" *ngIf="similarProducts === null">No records.</div>
+      <div class="container" *ngIf="similarProducts !== null">
+        <div class="row ">
+          <!--sort category-->
+          <div class="my-select">
+            <select class="custom-select " [(ngModel)]="sortCategory" (change)="changeOrder()">
+              <option selected value="Default" >Default</option>
+              <option value="Product Name" >Product Name</option>
+              <option value="Days Left">Days Left</option>
+              <option value="Price">Price</option>
+              <option value="Shopping Cost">Shopping Cost</option>
+            </select>
+          </div>
+          <!--sort order-->
+          <div class="my-select">
+            <select class="custom-select "  [disabled]="sortCategory === 'Default'" [(ngModel)]="ascendingOrder" (change)="changeOrder()">
+              <option selected value="0">Ascending</option>
+              <option value="1">Descending</option>
+            </select>
+          </div>
+
+        </div>
+
+        <div *ngFor="let product of showProducts">
+          <div class="card" >
+            <div class="card-body dark">
+              <div class="row">
+                <div  >
+                  <img style="width: 10em;height: 10em;margin: 5px;"  alt="Responsive image" [attr.src]="product.imageURL" >
+                </div>
+                <div class="col">
+                  <div class="text-secondary">
+                    {{product.title}}
+                  </div>
+                  <div class="text-success">
+                    Price: $ {{product.buyItNowPrice.__value__}}
+                  </div>
+                  <div class="ship-text" >
+                    Shipping Cost: $ {{product.shippingCost.__value__}}
+                  </div>
+                  <div class="text-light">
+                    Days Left: {{getLeftDays(product.timeLeft)}}
+                  </div>
+
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="d-flex justify-content-center align-items-center">
+          <button class="btn-dark" (click)="changeShowProductsNum()">{{showMode}} </button>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+</div>
